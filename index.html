@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PR Config</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&family=Sora:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b16;--card:#0e1526;--line:#1d2a47;--tx:#e6ebf7;--mut:#8593b3;--ac:#7c5cff;--ac2:#18e0c8;--ok:#22d39a;--bad:#ff5d73;--warn:#ffb020}
+[data-theme=light]{--bg:#eef2fa;--card:#fff;--line:#d8e0f0;--tx:#131a2e;--mut:#5d6b8c;--ac:#5b3df5;--ac2:#00a896}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Vazirmatn,Sora,sans-serif;min-height:100vh;
+background-image:radial-gradient(700px 300px at 85% -5%,color-mix(in srgb,var(--ac) 25%,transparent),transparent)}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1150px;margin:auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.logo{font-family:Sora;font-weight:700;font-size:26px;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+.logo b{background:linear-gradient(120deg,var(--ac),var(--ac2));-webkit-background-clip:text;color:transparent}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.ib{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;transition:.15s}
+.ib:hover{border-color:var(--ac)}
+.btn{background:linear-gradient(120deg,var(--ac),var(--ac2));border:0;color:#fff;border-radius:10px;padding:9px 16px;cursor:pointer;font-weight:600}
+.btn.g{background:var(--card);border:1px solid var(--line);color:var(--tx)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:18px}
+.st{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.st small{color:var(--mut)}.st h2{margin:6px 0 0;font-family:Sora,Vazirmatn;font-size:28px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.bar input,.bar select,dialog input,dialog select,dialog textarea{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px;outline:none}
+.bar input{flex:1;min-width:180px}
+input:focus,select:focus{border-color:var(--ac)}
+.list{display:grid;gap:12px}
+.u{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;grid-template-columns:1.3fr 1fr 1fr auto;gap:14px;align-items:center}
+.u h3{margin:0 0 4px;font-size:16px}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;border:1px solid;margin:0 0 0 4px}
+[dir=rtl] .tag{margin:0 0 0 4px}
+.active{color:var(--ok)}.disabled{color:var(--mut)}.expired{color:var(--bad)}
+.pb{height:7px;border-radius:9px;background:var(--line);overflow:hidden;margin-top:6px}
+.pb i{display:block;height:100%;background:linear-gradient(90deg,var(--ac2),var(--ac))}
+.pb i.hi{background:linear-gradient(90deg,var(--warn),var(--bad))}
+.m{font-size:12px;color:var(--mut)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.acts button{background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 9px;cursor:pointer}
+.acts button:hover{border-color:var(--ac)}
+dialog{background:var(--bg);color:var(--tx);border:1px solid var(--line);border-radius:16px;padding:20px;width:min(480px,92vw)}
+dialog::backdrop{background:#000a}
+dialog label{display:block;margin:10px 0 4px;font-size:13px;color:var(--mut)}
+dialog input,dialog select,dialog textarea{width:100%}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.chk{display:flex;gap:14px;align-items:center}.chk input{width:auto}
+.login{max-width:340px;margin:18vh auto;text-align:center}
+.login input{width:100%;margin:14px 0}
+#toast{position:fixed;bottom:20px;inset-inline:0;margin:auto;width:max-content;background:var(--ac);color:#fff;padding:9px 18px;border-radius:30px;opacity:0;transition:.25s;pointer-events:none}
+#toast.on{opacity:1}
+.empty{text-align:center;color:var(--mut);padding:50px 0}
+@media(max-width:760px){.u{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<dialog id="dlg"></dialog>
+<div id="toast"></div>
+<script>
+const T={
+fa:{app:'PR کانفیگ',login:'ورود به پنل',pass:'رمز عبور',enter:'ورود',wrong:'رمز اشتباه است',total:'کل کاربران',act:'کاربران فعال',cfg:'تعداد کانفیگ‌ها',traf:'ترافیک مصرفی',search:'جستجوی نام یا UUID...',all:'همه',active:'فعال',disabled:'غیرفعال',expired:'منقضی',newest:'جدیدترین',usage:'بیشترین مصرف',add:'کاربر جدید',bulk:'ساخت گروهی',set:'تنظیمات',out:'خروج',name:'نام',limit:'حجم (گیگ، ۰ = نامحدود)',used:'مصرف (گیگ)',exp:'تاریخ انقضا',ports:'پورت‌ها (با کاما)',proto:'پروتکل',count:'تعداد',note:'یادداشت',save:'ذخیره',cancel:'انصراف',sub:'لینک ساب',copyc:'کانفیگ‌ها',edit:'ویرایش',del:'حذف',copied:'کپی شد ✓',saved:'ذخیره شد ✓',host:'دامنه / آدرس سرور',sni:'SNI / Host (خالی = همان دامنه)',path:'مسیر WebSocket',tls:'TLS فعال',sure:'مطمئنی حذف شود؟',none:'هنوز کاربری نداری. اولین کاربر رو بساز.',unl:'نامحدود',days:'روز',left:'مانده',toggle:'فعال/غیرفعال',cfgs:'کانفیگ'},
+en:{app:'PR Config',login:'Panel login',pass:'Password',enter:'Sign in',wrong:'Wrong password',total:'Total users',act:'Active users',cfg:'Configs',traf:'Traffic used',search:'Search name or UUID...',all:'All',active:'Active',disabled:'Disabled',expired:'Expired',newest:'Newest',usage:'Top usage',add:'New user',bulk:'Bulk create',set:'Settings',out:'Log out',name:'Name',limit:'Limit (GB, 0 = unlimited)',used:'Used (GB)',exp:'Expiry date',ports:'Ports (comma separated)',proto:'Protocols',count:'Count',note:'Note',save:'Save',cancel:'Cancel',sub:'Sub link',copyc:'Configs',edit:'Edit',del:'Delete',copied:'Copied ✓',saved:'Saved ✓',host:'Server domain / address',sni:'SNI / Host (empty = same as domain)',path:'WebSocket path',tls:'TLS enabled',sure:'Delete this user?',none:'No users yet. Create your first one.',unl:'Unlimited',days:'days',left:'left',toggle:'Enable/Disable',cfgs:'configs'}};
+let lang=localStorage.lang||'fa',theme=localStorage.theme||'dark',token=localStorage.tok||'',users=[],q='',flt='all',sort='new';
+const t=k=>T[lang][k]||k,$=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const api=async(m,u,b)=>{const r=await fetch(u,{method:m,headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:b?JSON.stringify(b):undefined});if(r.status===401&&token){logout();throw 0}return r.json()};
+const toast=m=>{const e=$('#toast');e.textContent=m;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1600)};
+const copy=async s=>{try{await navigator.clipboard.writeText(s)}catch{const a=document.createElement('textarea');a.value=s;document.body.append(a);a.select();document.execCommand('copy');a.remove()}toast(t('copied'))};
+function applyLook(){document.documentElement.lang=lang;document.documentElement.dir=lang==='fa'?'rtl':'ltr';document.documentElement.dataset.theme=theme;document.title=t('app')}
+function logout(){localStorage.removeItem('tok');token='';render()}
+const tools=()=>`<div class="tools"><button class="ib" onclick="setLang()">${lang==='fa'?'EN':'فا'}</button><button class="ib" onclick="setTheme()">${theme==='dark'?'☀️':'🌙'}</button>${token?`<button class="ib" onclick="settings()">⚙️ ${t('set')}</button><button class="ib" onclick="logout()">⎋ ${t('out')}</button>`:''}</div>`;
+function setLang(){lang=lang==='fa'?'en':'fa';localStorage.lang=lang;render()}
+function setTheme(){theme=theme==='dark'?'light':'dark';localStorage.theme=theme;render()}
+async function render(){applyLook();
+if(!token){$('#app').innerHTML=`<div class="wrap"><div style="text-align:end">${tools()}</div><div class="login"><div class="logo" style="justify-content:center;font-size:38px">⚡<b>PR</b> Config</div><h3>${t('login')}</h3><input id="pw" type="password" placeholder="${t('pass')}" onkeydown="event.key==='Enter'&&doLogin()"><button class="btn" style="width:100%" onclick="doLogin()">${t('enter')}</button></div></div>`;return}
+try{users=await api('GET','/api/users')}catch{return}
+draw()}
+async function doLogin(){const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:$('#pw').value})});if(!r.ok)return toast(t('wrong'));token=(await r.json()).token;localStorage.tok=token;render()}
+const daysLeft=u=>u.expireAt?Math.ceil((new Date(u.expireAt)-new Date())/864e5):null;
+function draw(){
+const tot=users.reduce((a,u)=>a+u.usedGB,0),cf=users.reduce((a,u)=>a+u.links.length,0);
+let L=users.filter(u=>(flt==='all'||u.status===flt)&&(u.name+u.id).toLowerCase().includes(q.toLowerCase()));
+L.sort((a,b)=>sort==='use'?b.usedGB-a.usedGB:new Date(b.createdAt)-new Date(a.createdAt));
+const keep=document.activeElement&&document.activeElement.id==='q';
+$('#app').innerHTML=`<div class="wrap"><header><div class="logo">⚡ <b>PR</b> Config</div>${tools()}</header>
+<div class="stats"><div class="st"><small>${t('total')}</small><h2>${users.length}</h2></div><div class="st"><small>${t('act')}</small><h2 style="color:var(--ok)">${users.filter(u=>u.status==='active').length}</h2></div><div class="st"><small>${t('cfg')}</small><h2>${cf}</h2></div><div class="st"><small>${t('traf')}</small><h2>${tot.toFixed(1)} GB</h2></div></div>
+<div class="bar"><input id="q" value="${esc(q)}" placeholder="${t('search')}" oninput="q=this.value;draw()">
+<select onchange="flt=this.value;draw()">${['all','active','disabled','expired'].map(k=>`<option value="${k}" ${flt===k?'selected':''}>${t(k)}</option>`).join('')}</select>
+<select onchange="sort=this.value;draw()"><option value="new">${t('newest')}</option><option value="use" ${sort==='use'?'selected':''}>${t('usage')}</option></select>
+<button class="btn" onclick="form()">＋ ${t('add')}</button><button class="btn g" onclick="form(null,true)">${t('bulk')}</button></div>
+<div class="list">${L.length?L.map(row).join(''):`<div class="empty">${t('none')}</div>`}</div></div>`;
+if(keep){const e=$('#q');e.focus();e.setSelectionRange(q.length,q.length)}}
+function row(u){const p=u.limitGB>0?Math.min(100,u.usedGB/u.limitGB*100):0,d=daysLeft(u);
+return `<div class="u"><div><h3>${esc(u.name)}<span class="tag ${u.status}">${t(u.status)}</span></h3><div class="m">${u.protocols.join(' / ').toUpperCase()} · ${u.ports.join(', ')} · ${u.links.length} ${t('cfgs')}</div><div class="m" style="direction:ltr;text-align:start">${u.id}</div></div>
+<div><div class="m">${u.usedGB.toFixed(2)} / ${u.limitGB>0?u.limitGB+' GB':t('unl')}</div><div class="pb"><i class="${p>85?'hi':''}" style="width:${u.limitGB>0?p:100}%"></i></div></div>
+<div class="m">${d===null?t('unl'):d<0?t('expired'):d+' '+t('days')+' '+t('left')}</div>
+<div class="acts"><button title="${t('sub')}" onclick="copy(location.origin+'/sub/${u.id}')">🔗 ${t('sub')}</button><button onclick="copyCfg('${u.id}')">📋 ${t('copyc')}</button><button title="${t('toggle')}" onclick="toggle('${u.id}')">${u.enabled?'⏸':'▶️'}</button><button title="${t('edit')}" onclick="form('${u.id}')">✏️</button><button title="${t('del')}" onclick="del('${u.id}')">🗑</button></div></div>`}
+const copyCfg=id=>copy(users.find(u=>u.id===id).links.join('\n'));
+async function toggle(id){const u=users.find(x=>x.id===id);await api('PUT','/api/users/'+id,{enabled:!u.enabled});render()}
+async function del(id){if(confirm(t('sure'))){await api('DELETE','/api/users/'+id);render()}}
+function form(id,bulk){const u=id?users.find(x=>x.id===id):{name:'',protocols:['vless'],ports:[443],limitGB:50,usedGB:0,expireAt:'',note:''};
+const d=$('#dlg');d.innerHTML=`<h3>${id?t('edit'):bulk?t('bulk'):t('add')}</h3>
+<label>${t('name')}</label><input id="f_name" value="${esc(u.name||'PR-'+Math.random().toString(36).slice(2,6).toUpperCase())}">
+${bulk?`<label>${t('count')}</label><input id="f_count" type="number" min="1" max="100" value="10">`:''}
+<div class="row"><div><label>${t('limit')}</label><input id="f_lim" type="number" min="0" value="${u.limitGB}"></div>${id?`<div><label>${t('used')}</label><input id="f_used" type="number" min="0" step="0.01" value="${u.usedGB}"></div>`:''}</div>
+<label>${t('exp')}</label><input id="f_exp" type="date" value="${u.expireAt?u.expireAt.slice(0,10):''}">
+<label>${t('ports')}</label><input id="f_ports" dir="ltr" value="${u.ports.join(',')}">
+<label>${t('proto')}</label><div class="chk"><label><input type="checkbox" id="f_vless" ${u.protocols.includes('vless')?'checked':''}> VLESS</label><label><input type="checkbox" id="f_trojan" ${u.protocols.includes('trojan')?'checked':''}> Trojan</label><label><input type="checkbox" id="f_vmess" ${u.protocols.includes('vmess')?'checked':''}> VMess</label></div>
+<label>${t('note')}</label><textarea id="f_note" rows="2">${esc(u.note||'')}</textarea>
+<div class="row" style="margin-top:16px"><button class="btn" onclick="submitForm('${id||''}')">${t('save')}</button><button class="btn g" onclick="$('#dlg').close()">${t('cancel')}</button></div>`;d.showModal()}
+async function submitForm(id){const b={name:$('#f_name').value,limitGB:+$('#f_lim').value,expireAt:$('#f_exp').value,ports:$('#f_ports').value.split(',').map(s=>s.trim()).filter(Boolean),protocols:['vless','trojan','vmess'].filter(p=>$('#f_'+p).checked),note:$('#f_note').value};
+if($('#f_used'))b.usedGB=+$('#f_used').value;if($('#f_count'))b.count=+$('#f_count').value;
+if(!b.protocols.length)b.protocols=['vless'];
+await api(id?'PUT':'POST',id?'/api/users/'+id:'/api/users',b);$('#dlg').close();toast(t('saved'));render()}
+async function settings(){const s=await api('GET','/api/settings');const d=$('#dlg');
+d.innerHTML=`<h3>${t('set')}</h3><label>${t('host')}</label><input id="s_host" dir="ltr" value="${esc(s.host||'')}" placeholder="${location.hostname}"><label>${t('sni')}</label><input id="s_sni" dir="ltr" value="${esc(s.sni||'')}"><label>${t('path')}</label><input id="s_path" dir="ltr" value="${esc(s.wsPath||'/ws')}"><label class="chk" style="margin-top:12px"><input type="checkbox" id="s_tls" ${s.tls!==false?'checked':''} style="width:auto"> ${t('tls')}</label>
+<div class="row" style="margin-top:16px"><button class="btn" onclick="saveSet()">${t('save')}</button><button class="btn g" onclick="$('#dlg').close()">${t('cancel')}</button></div>`;d.showModal()}
+async function saveSet(){await api('PUT','/api/settings',{host:$('#s_host').value.trim(),sni:$('#s_sni').value.trim(),wsPath:$('#s_path').value.trim()||'/ws',tls:$('#s_tls').checked});$('#dlg').close();toast(t('saved'));render()}
+render();
+</script>
+</body>
+</html>
